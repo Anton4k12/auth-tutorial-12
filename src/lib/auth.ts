@@ -6,6 +6,11 @@ export const auth = betterAuth({
     connectionString: process.env.DATABASE_URL,
   }),
 
+  emailAndPassword: {
+    enabled: true,
+    autoSignIn: false,
+  },
+
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_CLIENT_ID as string,

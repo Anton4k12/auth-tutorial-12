@@ -4,20 +4,50 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
+  CardDescription,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
+
 import { cn } from "@/lib/utils";
-// import { useState } from "react";
+
+import { authClient } from "@/lib/auth-client";
 
 export default function SignIn() {
-  //   const [email, setEmail] = useState("");
-  //   const [password, setPassword] = useState("");
-  //   const [loading, setLoading] = useState(false);
-  //   const [rememberMe, setRememberMe] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { data, error } = await authClient.signIn.email(
+    {
+      /**
+       * The user email
+       */
+      email,
+      /**
+       * The user password
+       */
+      password,
+      /**
+       * a url to redirect to after the user verifies their email (optional)
+       */
+      callbackURL: "/dashboard",
+      /**
+       * remember the user session after the browser is closed.
+       * @default true
+       */
+      rememberMe: false,
+    },
+    {
+      //callbacks
+    }
+  );
 
   return (
     <Card className="max-w-md">
@@ -29,6 +59,46 @@ export default function SignIn() {
       </CardHeader>
       <CardContent>
         <div className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="m@example.com"
+              required
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              value={email}
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <div className="flex items-center">
+              <Label htmlFor="password">Password</Label>
+            </div>
+
+            <Input
+              id="password"
+              type="password"
+              placeholder="password"
+              autoComplete="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading}
+            onClick={async () => {
+              await signIn.email({ email, password });
+            }}
+          >
+            {loading ? <Loader2 size={16} className="animate-spin" /> : "Login"}
+          </Button>
+
           <div
             className={cn(
               "w-full gap-2 flex items-center",
